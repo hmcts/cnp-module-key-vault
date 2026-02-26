@@ -1,6 +1,6 @@
 data "azurerm_user_assigned_identity" "jenkins" {
-  name                = "jenkins-${var.env}-mi"
-  resource_group_name = "managed-identities-${var.env}-rg"
+  name                = "jenkins-ptlsbox-mi"
+  resource_group_name = "managed-identities-ptlsbox-rg"
 }
 
 resource "azurerm_key_vault_access_policy" "jenkins" {
