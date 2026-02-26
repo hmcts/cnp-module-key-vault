@@ -1,6 +1,6 @@
 data "azurerm_user_assigned_identity" "jenkins" {
-  name                = "jenkins-ptl-mi"
-  resource_group_name = "managed-identities-ptl-rg"
+  name                = "jenkins-cftptl-intsvc-mi"
+  resource_group_name = "managed-identities-cftptl-intsvc-rg"
 }
 
 resource "azurerm_key_vault_access_policy" "jenkins" {
