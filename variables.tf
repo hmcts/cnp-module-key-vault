@@ -110,3 +110,8 @@ variable "additional_managed_identities_access" {
   type    = list(string)
   default = []
 }
+
+variable "jenkins_object_id" {
+  description = "The object ID of the environment specific Jenkins managed identity"
+  default     = ""
+}
