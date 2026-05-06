@@ -29,6 +29,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
+  count        = var.jenkins_object_id == "" ? 1 : 0
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = var.object_id
