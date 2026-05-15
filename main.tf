@@ -28,6 +28,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
+  # if running on a non-ptl agent, this resource will not be created
   count        = anytrue([for fragment in local.excluded_sp_name_fragments : length(regexall(fragment, lower(data.azuread_service_principal.current.display_name))) > 0]) ? 1 : 0
   key_vault_id = azurerm_key_vault.kv.id
 
