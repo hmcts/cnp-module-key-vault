@@ -1,8 +1,7 @@
 locals {
-  vault_name = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  vault_name                 = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  excluded_sp_name_fragments = ["cftptl", "cftsbox", "ptl", "ptlsbox"]
 }
-
-data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
   name                = local.vault_name
@@ -29,7 +28,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
-  count        = var.jenkins_object_id == "" ? 1 : 0
+  count        = !anytrue([for fragment in local.excluded_sp_name_fragments : contains(data.azuread_service_principal.current.display_name, fragment)]) ? 1 : 0
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = var.object_id

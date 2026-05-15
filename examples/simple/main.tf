@@ -6,9 +6,6 @@ resource "azurerm_resource_group" "rg" {
   name     = "${var.product}-${var.env}"
   location = var.location
 }
-
-data "azurerm_client_config" "current" {}
-
 module "vault" {
   source              = "../../"
   product             = var.product
