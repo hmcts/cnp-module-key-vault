@@ -77,10 +77,6 @@ variable "developers_group" {
   default = "DTS CFT Developers"
 }
 
-variable "developers_group_object_id" {
-  default = ""
-}
-
 variable "network_acls_allowed_ip_ranges" {
   description = "IP Address space Allowed"
   type        = list(string)

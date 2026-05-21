@@ -6,7 +6,6 @@ data "azuread_service_principal" "current" {
 
 data "azuread_group" "developers" {
   display_name = var.developers_group
-  count        = var.developers_group_object_id == "" ? 1 : 0
 }
 
 data "azurerm_user_assigned_identity" "additional_managed_identities_access" {
