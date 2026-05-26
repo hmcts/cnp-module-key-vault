@@ -1,6 +1,7 @@
 locals {
-  managed_identity_list = toset(compact(concat(var.managed_identity_object_ids, [var.managed_identity_object_id])))
-  env                   = replace(var.env, "idam-", "")
+  preview_jenkins_object_ids = var.grant_preview_jenkins_access && var.env == "aat" ? data.azurerm_user_assigned_identity.jenkins_preview[*].principal_id : []
+  managed_identity_list      = toset(compact(concat(var.managed_identity_object_ids, [var.managed_identity_object_id], local.preview_jenkins_object_ids)))
+  env                        = replace(var.env, "idam-", "")
 }
 
 resource "azurerm_user_assigned_identity" "managed_identity" {

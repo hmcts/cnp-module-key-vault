@@ -115,3 +115,9 @@ variable "jenkins_object_id" {
   description = "The object ID of the environment specific Jenkins managed identity"
   default     = ""
 }
+
+variable "grant_preview_jenkins_access" {
+  description = "Temporary opt-in for preview deployments that still read AAT vault secrets. When true for env=aat, grants jenkins-preview-mi Get/List access."
+  type        = bool
+  default     = false
+}

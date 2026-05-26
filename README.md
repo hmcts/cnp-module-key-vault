@@ -143,6 +143,22 @@ module "key_vault" {
 
 ```
 
+#### Temporarily grant preview Jenkins access to AAT vaults
+Some preview deployments still read AAT team secrets through the Jenkins
+library's default `preview -> aat` vault override. For those repositories,
+opt in to granting `jenkins-preview-mi` `Get/List` access to the AAT vault:
+
+```hcl
+module "key_vault" {
+  source = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  #...
+  grant_preview_jenkins_access = var.env == "aat"
+}
+```
+
+This is a temporary migration exception and should be removed once preview
+secret loading no longer depends on AAT Key Vaults.
+
 ### Accessing Managed Identity details
 You may need to join the readers group for the subscription in order to see the manged identity
 

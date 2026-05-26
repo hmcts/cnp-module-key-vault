@@ -14,6 +14,12 @@ data "azurerm_user_assigned_identity" "additional_managed_identities_access" {
   resource_group_name = "managed-identities-${var.env}-rg"
 }
 
+data "azurerm_user_assigned_identity" "jenkins_preview" {
+  count               = var.grant_preview_jenkins_access && var.env == "aat" ? 1 : 0
+  name                = "jenkins-preview-mi"
+  resource_group_name = "managed-identities-preview-rg"
+}
+
 data "azuread_group" "product_team" {
   display_name     = var.product_group_name
   security_enabled = true
