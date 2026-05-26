@@ -1,8 +1,7 @@
 locals {
-  vault_name = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  vault_name                 = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  excluded_sp_name_fragments = ["cftptl", "cftsbox", "ptl", "ptlsbox"]
 }
-
-data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
   name                = local.vault_name
@@ -29,6 +28,14 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
+  # If running on a non-ptl agent, this resource will not be created.
+  # If the environment Jenkins MI is already managed by jenkins_access.tf,
+  # avoid creating a duplicate Key Vault access policy for the same object id.
+  count = var.object_id != var.jenkins_object_id && anytrue([
+    for fragment in local.excluded_sp_name_fragments :
+    length(regexall(fragment, lower(data.azuread_service_principal.current.display_name))) > 0
+  ]) ? 1 : 0
+
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = var.object_id

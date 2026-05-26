@@ -1,7 +1,3 @@
-data "azuread_group" "developers" {
-  display_name = var.developers_group
-}
-
 locals {
   is_prod = length(regexall(".*(prod).*", var.env)) > 0
 }
