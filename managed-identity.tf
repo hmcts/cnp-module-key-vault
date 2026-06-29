@@ -1,6 +1,6 @@
 locals {
   preview_jenkins_object_ids = var.grant_preview_jenkins_access && var.env == "aat" ? data.azurerm_user_assigned_identity.jenkins_preview[*].principal_id : []
-  dev_jenkins_object_ids     = var.grant_dev_jenkins_access && var.env == "stg" ? data.azurerm_user_assigned_identity.jenkins_dev[*].principal_id : []
+  dev_jenkins_object_ids     = var.grant_dev_jenkins_access && var.env == "stg" ? data.azuread_service_principal.jenkins_dev[*].object_id : []
   managed_identity_list      = toset(compact(concat(var.managed_identity_object_ids, [var.managed_identity_object_id], local.preview_jenkins_object_ids, local.dev_jenkins_object_ids)))
   env                        = replace(var.env, "idam-", "")
 }
