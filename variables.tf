@@ -121,3 +121,9 @@ variable "grant_preview_jenkins_access" {
   type        = bool
   default     = false
 }
+
+variable "grant_dev_jenkins_access" {
+  description = "Temporary opt-in for dev deployments that still read STG vault secrets. When true for env=stg, grants jenkins-dev-mi Get/List access."
+  type        = bool
+  default     = false
+}
