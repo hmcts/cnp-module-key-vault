@@ -50,11 +50,6 @@ resource "azurerm_key_vault_access_policy" "jenkins" {
 resource "azurerm_key_vault_access_policy" "jenkins_ptl" {
   # This is needed in some instances of nightly pipelines
   # Re-adding this until that is reconfigured
-  # If running on a ptl agent, this resource will not be created.
-  count = var.object_id == var.jenkins_object_id && anytrue([
-    for fragment in local.excluded_sp_name_fragments :
-    length(regexall(fragment, lower(data.azuread_service_principal.current.display_name))) > 0
-  ]) ? 1 : 0
 
   key_vault_id = azurerm_key_vault.kv.id
 
