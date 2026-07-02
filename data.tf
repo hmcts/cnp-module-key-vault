@@ -27,19 +27,15 @@ data "azuread_service_principal" "jenkins_dev" {
 
 data "azurerm_user_assigned_identity" "jenkins_ptl" {
   name = var.env != "sbox" ? (
-    var.common_tags.business_area == "cft" ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
+    contains(values(var.common_tags.business_area), "cft") ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
     ) : (
-    var.common_tags.business_area == "cft" ? "jenkins-cftsbox-intsvc-mi" : "jenkins-ptlsbox-mi"
+    contains(values(var.common_tags.business_area), "sds") ? "jenkins-cftsbox-intsvc-mi" : "jenkins-ptlsbox-mi"
   )
   resource_group_name = var.env != "sbox" ? (
-    var.common_tags.business_area == "cft" ? "jenkins-managed-identities-cftptl-intsvc-rg" : "jenkins-managed-identities-ptl-rg"
+    contains(values(var.common_tags.business_area), "cft") ? "jenkins-managed-identities-cftptl-intsvc-rg" : "jenkins-managed-identities-ptl-rg"
     ) : (
-    var.common_tags.business_area == "cft" ? "jenkins-managed-identities-cftsbox-intsvc-rg" : "jenkins-managed-identities-ptlsbox-rg"
+    contains(values(var.common_tags.business_area), "sds") ? "jenkins-managed-identities-cftsbox-intsvc-rg" : "jenkins-managed-identities-ptlsbox-rg"
   )
-}
-
-data "azuread_service_principal" "jenkins_ptl" {
-  display_name = contains(var.common_tags.business_area, "cft") ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
 }
 
 data "azuread_group" "product_team" {
