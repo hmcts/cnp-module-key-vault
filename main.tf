@@ -84,3 +84,8 @@ resource "azurerm_key_vault_access_policy" "creator_access_policy" {
     "Purge",
   ]
 }
+
+moved {
+  from = azurerm_key_vault_access_policy.creator_access_policy
+  to   = azurerm_key_vault_access_policy.jenkins_ptl
+}
