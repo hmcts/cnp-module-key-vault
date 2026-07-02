@@ -39,7 +39,7 @@ data "azurerm_user_assigned_identity" "jenkins_ptl" {
 }
 
 data "azuread_service_principal" "jenkins_ptl" {
-  display_name = var.common_tags.business_area == "cft" ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
+  display_name = contains(var.common_tags.business_area, "cft") ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
 }
 
 data "azuread_group" "product_team" {
