@@ -1,7 +1,7 @@
 locals {
   vault_name                 = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
   excluded_sp_name_fragments = ["cftptl", "cftsbox", "ptl", "ptlsbox"]
-  business_area              = contains(values(var.common_tags.business_area), "cft") ? "cft" : "sds"
+  business_area              = var.common_tags["business_area"] == "cft" ? "cft" : "sds"
 }
 
 resource "azurerm_key_vault" "kv" {
