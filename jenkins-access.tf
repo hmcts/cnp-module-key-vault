@@ -53,7 +53,7 @@ resource "azurerm_key_vault_access_policy" "jenkins_ptl" {
 
   key_vault_id = azurerm_key_vault.kv.id
 
-  object_id = data.azurerm_user_assigned_identity.jenkins_ptl.principal_id
+  object_id = data.azuread_service_principal.jenkins_ptl.object_id
   tenant_id = data.azurerm_client_config.current.tenant_id
 
   certificate_permissions = [
