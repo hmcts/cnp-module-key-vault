@@ -27,14 +27,14 @@ data "azuread_service_principal" "jenkins_dev" {
 
 data "azurerm_user_assigned_identity" "jenkins_ptl" {
   name = var.env != "sbox" ? (
-    contains(values(var.common_tags.business_area), "cft") ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
+    local.business_area == "cft" ? "jenkins-cftptl-intsvc-mi" : "jenkins-cftsbox-intsvc-mi"
     ) : (
-    contains(values(var.common_tags.business_area), "sds") ? "jenkins-cftsbox-intsvc-mi" : "jenkins-ptlsbox-mi"
+    local.business_area == "sds" ? "jenkins-ptl-mi" : "jenkins-ptlsbox-mi"
   )
   resource_group_name = var.env != "sbox" ? (
-    contains(values(var.common_tags.business_area), "cft") ? "jenkins-managed-identities-cftptl-intsvc-rg" : "jenkins-managed-identities-ptl-rg"
+    local.business_area == "cft" ? "jenkins-managed-identities-cftptl-intsvc-rg" : "jenkins-managed-identities-cftsbox-intsvc-rg"
     ) : (
-    contains(values(var.common_tags.business_area), "sds") ? "jenkins-managed-identities-cftsbox-intsvc-rg" : "jenkins-managed-identities-ptlsbox-rg"
+    local.business_area == "sds" ? "jenkins-managed-identities-ptl-rg" : "jenkins-managed-identities-ptlsbox-rg"
   )
 }
 
