@@ -28,59 +28,7 @@ resource "azurerm_key_vault" "kv" {
   tags = var.common_tags
 }
 
-resource "azurerm_key_vault_access_policy" "creator_access_policy" {
-  # If running on a non-ptl agent, this resource will not be created.
-  # If the environment Jenkins MI is already managed by jenkins_access.tf,
-  # avoid creating a duplicate Key Vault access policy for the same object id.
-  count = var.object_id != var.jenkins_object_id && anytrue([
-    for fragment in local.excluded_sp_name_fragments :
-    length(regexall(fragment, lower(data.azuread_service_principal.current.display_name))) > 0
-  ]) ? 1 : 0
-
-  key_vault_id = azurerm_key_vault.kv.id
-
-  object_id = var.object_id
-  tenant_id = data.azurerm_client_config.current.tenant_id
-
-  certificate_permissions = [
-    "Create",
-    "Delete",
-    "DeleteIssuers",
-    "Get",
-    "GetIssuers",
-    "Import",
-    "List",
-    "ListIssuers",
-    "SetIssuers",
-    "Update",
-    "ManageContacts",
-    "ManageIssuers",
-  ]
-
-  key_permissions = [
-    "Create",
-    "List",
-    "Get",
-    "Delete",
-    "Update",
-    "Import",
-    "Backup",
-    "Restore",
-    "Decrypt",
-    "Encrypt",
-    "UnwrapKey",
-    "WrapKey",
-    "Sign",
-    "Verify",
-    "GetRotationPolicy",
-  ]
-
-  secret_permissions = [
-    "Set",
-    "List",
-    "Get",
-    "Delete",
-    "Recover",
-    "Purge",
-  ]
+moved {
+  from = azurerm_key_vault_access_policy.creator_access_policy
+  to   = azurerm_key_vault_access_policy.jenkins_ptl
 }
