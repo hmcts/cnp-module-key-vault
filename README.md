@@ -23,6 +23,75 @@ The module creates the following permissions:
  - Managed Identity ($product)-$env-mi
  - Product team/developers access
 
+## RBAC authorization
+
+By default the module uses [vault access policies](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy) for data-plane authorization.
+Set `enable_rbac_authorization = true` to switch to [Azure RBAC](https://learn.microsoft.com/en-us/azure/key-vault/general/rbac-guide) instead.
+When enabled, access policies are not created and the following role assignments are made in their place:
+
+| Identity | Role |
+|---|---|
+| `object_id` (creator / pipeline caller) | Key Vault Administrator |
+| `jenkins_object_id` | Key Vault Administrator |
+| `product_group_name` / `product_group_object_id` (product team) | Key Vault Administrator |
+| `managed_identity_object_ids` / `managed_identity_object_id` | Key Vault Secrets User |
+| `additional_managed_identities_access` | Key Vault Secrets User |
+| Implicitly created managed identity (`create_managed_identity = true`) | Key Vault Secrets User |
+| `DTS CFT Developers` group (non-prod only) | Key Vault Secrets User |
+
+### Basic RBAC usage
+
+```hcl
+module "key_vault" {
+  source                  = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  product                 = var.product
+  env                     = var.env
+  object_id               = data.azurerm_client_config.current.object_id
+  resource_group_name     = azurerm_resource_group.rg.name
+  product_group_name      = "Your AAD group"
+  enable_rbac_authorization = true
+  common_tags             = var.common_tags
+}
+```
+
+### Additional role assignments
+
+Use `additional_role_assignments` to grant extra identities access to the vault beyond the defaults.
+This is only used when `enable_rbac_authorization = true`.
+
+```hcl
+module "key_vault" {
+  source                  = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  product                 = var.product
+  env                     = var.env
+  object_id               = data.azurerm_client_config.current.object_id
+  resource_group_name     = azurerm_resource_group.rg.name
+  product_group_name      = "Your AAD group"
+  enable_rbac_authorization = true
+  common_tags             = var.common_tags
+
+  additional_role_assignments = [
+    {
+      object_id            = azurerm_user_assigned_identity.app.principal_id
+      role_definition_name = "Key Vault Secrets User"
+    },
+    {
+      object_id            = data.azuread_group.soc_team.object_id
+      role_definition_name = "Key Vault Reader"
+    },
+  ]
+}
+```
+
+### Migrating from access policies to RBAC
+
+Switching an existing vault from access policy mode to RBAC is a two-step change:
+
+1. Set `enable_rbac_authorization = true` in the module call.
+2. Ensure the identity running `terraform apply` has the `Owner` or `User Access Administrator` role on the vault (or its resource group / subscription) — this permission is required to change the vault's authorization model and to create role assignments.
+
+> **Note:** `moved` blocks are included in the module so that existing access policy resources are cleanly removed from state rather than destroyed and recreated. No manual state manipulation is needed.
+
 ## Reading secrets
 
 All developers have access to read non production secrets if they are a member of the `DTS CFT Developers` Azure AD group
