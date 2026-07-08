@@ -1,6 +1,8 @@
 locals {
-  managed_identity_list = toset(compact(concat(var.managed_identity_object_ids, [var.managed_identity_object_id])))
-  env                   = replace(var.env, "idam-", "")
+  preview_jenkins_object_ids = var.grant_preview_jenkins_access && var.env == "aat" ? data.azurerm_user_assigned_identity.jenkins_preview[*].principal_id : []
+  dev_jenkins_object_ids     = var.grant_dev_jenkins_access && var.env == "stg" ? data.azuread_service_principal.jenkins_dev[*].object_id : []
+  managed_identity_list      = toset(compact(concat(var.managed_identity_object_ids, [var.managed_identity_object_id], local.preview_jenkins_object_ids, local.dev_jenkins_object_ids)))
+  env                        = replace(var.env, "idam-", "")
 }
 
 resource "azurerm_user_assigned_identity" "managed_identity" {
@@ -35,12 +37,6 @@ resource "azurerm_key_vault_access_policy" "managed_identity_access_policy" {
   ]
 
   for_each = local.managed_identity_list
-}
-
-data "azurerm_user_assigned_identity" "additional_managed_identities_access" {
-  for_each            = toset(var.additional_managed_identities_access)
-  name                = "${each.value}-${var.env}-mi"
-  resource_group_name = "managed-identities-${var.env}-rg"
 }
 
 resource "azurerm_key_vault_access_policy" "managed_identity_names_access_policy" {
