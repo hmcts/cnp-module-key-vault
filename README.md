@@ -56,57 +56,15 @@ module "key_vault" {
 
 ### Additional role assignments
 
-Use `additional_role_assignments` to grant extra identities access to the vault beyond the defaults.
-This is only used when `enable_rbac_authorization = true`.
-
-The value is a **map** — the keys are arbitrary but must be stable, plan-time-known strings (they
-become `for_each` map keys inside the module). Using a descriptive name such as the identity or
-group name is recommended.
+The module only manages role assignments for its built-in identities. Any additional assignments
+should be created by the consumer using `module.key_vault.key_vault_id` as the scope:
 
 ```hcl
-module "key_vault" {
-  source                  = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
-  product                 = var.product
-  env                     = var.env
-  object_id               = data.azurerm_client_config.current.object_id
-  resource_group_name     = azurerm_resource_group.rg.name
-  product_group_name      = "Your AAD group"
-  enable_rbac_authorization = true
-  common_tags             = var.common_tags
-
-  additional_role_assignments = {
-    app_identity = {
-      object_id            = azurerm_user_assigned_identity.app.principal_id
-      role_definition_name = "Key Vault Secrets User"
-    }
-    soc_team = {
-      object_id            = data.azuread_group.soc_team.object_id
-      role_definition_name = "Key Vault Reader"
-    }
-  }
-}
-```
-
-When the set of identities is dynamic (e.g. driven by a variable), use a `for` expression to build
-the map — the keys must come from a plan-time-known value such as the group name, not from a
-data-source attribute like `object_id`:
-
-```hcl
-# data source keyed by group name — the name is plan-time-known, object_id is not
-data "azuread_group" "readers" {
-  for_each         = var.reader_groups   # set of display name strings
-  display_name     = each.value
-  security_enabled = true
-}
-
-module "key_vault" {
-  # ...
-  additional_role_assignments = {
-    for name, group in data.azuread_group.readers : name => {
-      object_id            = group.object_id
-      role_definition_name = "Key Vault Secrets User"
-    }
-  }
+resource "azurerm_role_assignment" "kv_reader" {
+  for_each             = local.reader_groups
+  scope                = module.key_vault.key_vault_id
+  role_definition_name = "Key Vault Reader"
+  principal_id         = data.azuread_group.readers[each.key].object_id
 }
 ```
 

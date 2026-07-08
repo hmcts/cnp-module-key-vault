@@ -123,16 +123,7 @@ variable "jenkins_object_id" {
 }
 
 variable "enable_rbac_authorization" {
-  description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities and any entries in additional_role_assignments."
+  description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities."
   type        = bool
   default     = false
-}
-
-variable "additional_role_assignments" {
-  description = "Extra RBAC role assignments to create on the Key Vault. Only used when enable_rbac_authorization is true. Keys are arbitrary but must be unique and stable — they become the for_each map keys, so they must be known at plan time. Use a descriptive string (e.g. the identity name or group name). Each value requires object_id (principal) and role_definition_name (e.g. 'Key Vault Secrets User')."
-  type = map(object({
-    object_id            = string
-    role_definition_name = string
-  }))
-  default = {}
 }

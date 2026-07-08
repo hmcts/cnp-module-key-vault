@@ -57,12 +57,3 @@ resource "azurerm_role_assignment" "product_team" {
   role_definition_name = "Key Vault Administrator"
   principal_id         = local.product_group_object_id
 }
-
-# Consumer-supplied additional role assignments.
-resource "azurerm_role_assignment" "additional" {
-  for_each = var.enable_rbac_authorization ? var.additional_role_assignments : {}
-
-  scope                = azurerm_key_vault.kv.id
-  role_definition_name = each.value.role_definition_name
-  principal_id         = each.value.object_id
-}
