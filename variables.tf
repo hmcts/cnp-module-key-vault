@@ -121,3 +121,18 @@ variable "jenkins_object_id" {
   description = "The object ID of the environment specific Jenkins managed identity"
   default     = ""
 }
+
+variable "enable_rbac_authorization" {
+  description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities and any entries in additional_role_assignments."
+  type        = bool
+  default     = false
+}
+
+variable "additional_role_assignments" {
+  description = "Extra RBAC role assignments to create on the Key Vault. Only used when enable_rbac_authorization is true. Each entry requires an object_id (principal) and a role_definition_name (e.g. 'Key Vault Secrets User')."
+  type = list(object({
+    object_id            = string
+    role_definition_name = string
+  }))
+  default = []
+}
