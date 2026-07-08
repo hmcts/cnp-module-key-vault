@@ -129,10 +129,10 @@ variable "enable_rbac_authorization" {
 }
 
 variable "additional_role_assignments" {
-  description = "Extra RBAC role assignments to create on the Key Vault. Only used when enable_rbac_authorization is true. Each entry requires an object_id (principal) and a role_definition_name (e.g. 'Key Vault Secrets User')."
-  type = list(object({
+  description = "Extra RBAC role assignments to create on the Key Vault. Only used when enable_rbac_authorization is true. Keys are arbitrary but must be unique and stable — they become the for_each map keys, so they must be known at plan time. Use a descriptive string (e.g. the identity name or group name). Each value requires object_id (principal) and role_definition_name (e.g. 'Key Vault Secrets User')."
+  type = map(object({
     object_id            = string
     role_definition_name = string
   }))
-  default = []
+  default = {}
 }

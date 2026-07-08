@@ -29,12 +29,12 @@ module "vault" {
   enable_rbac_authorization = true
 
   # Grant extra identities access on top of the module defaults.
-  additional_role_assignments = [
-    {
+  additional_role_assignments = {
+    app_identity = {
       object_id            = azurerm_user_assigned_identity.app.principal_id
       role_definition_name = "Key Vault Secrets User"
-    },
-  ]
+    }
+  }
 }
 
 variable "common_tags" {

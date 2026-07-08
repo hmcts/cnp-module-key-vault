@@ -60,9 +60,7 @@ resource "azurerm_role_assignment" "product_team" {
 
 # Consumer-supplied additional role assignments.
 resource "azurerm_role_assignment" "additional" {
-  for_each = var.enable_rbac_authorization ? {
-    for ra in var.additional_role_assignments : "${ra.object_id}:${ra.role_definition_name}" => ra
-  } : {}
+  for_each = var.enable_rbac_authorization ? var.additional_role_assignments : {}
 
   scope                = azurerm_key_vault.kv.id
   role_definition_name = each.value.role_definition_name
