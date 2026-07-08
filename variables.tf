@@ -97,6 +97,12 @@ variable "purge_protection_enabled" {
   default = true
 }
 
+variable "public_network_access_enabled" {
+  description = "Whether public network access is allowed for this Key Vault. Set to false when using a private endpoint."
+  type        = bool
+  default     = true
+}
+
 variable "private_endpoint_subnet_id" {
   description = "Subnet ID to attach private endpoint to - overrides the default subnet id"
   default     = null
