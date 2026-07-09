@@ -10,6 +10,7 @@ locals {
 }
 
 resource "azurerm_key_vault_access_policy" "product_team_access_policy" {
+  count        = var.enable_rbac_authorization ? 0 : 1
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = local.product_group_object_id

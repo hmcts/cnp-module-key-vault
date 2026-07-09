@@ -26,5 +26,5 @@ resource "azurerm_key_vault_access_policy" "developer" {
     "List",
   ]
 
-  count = local.is_prod ? 0 : 1
+  count = var.enable_rbac_authorization ? 0 : (local.is_prod ? 0 : 1)
 }

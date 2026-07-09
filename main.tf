@@ -18,6 +18,7 @@ resource "azurerm_key_vault" "kv" {
   soft_delete_retention_days      = 90
   purge_protection_enabled        = var.purge_protection_enabled
   public_network_access_enabled   = var.public_network_access_enabled
+  rbac_authorization_enabled      = var.enable_rbac_authorization
 
   network_acls {
     bypass                     = "AzureServices"
@@ -30,6 +31,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
+  count        = var.enable_rbac_authorization ? 0 : 1
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = var.object_id
