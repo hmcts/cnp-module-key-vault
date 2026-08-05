@@ -112,6 +112,12 @@ variable "private_endpoint_name" {
   default = null
 }
 
+variable "enable_private_endpoint" {
+  description = "Whether to create the private endpoint. Leave unset to keep the existing behaviour of inferring this from private_endpoint_subnet_id. Set to true when the subnet is created by the same plan, where that inference cannot be resolved."
+  type        = bool
+  default     = null
+}
+
 variable "additional_managed_identities_access" {
   type    = list(string)
   default = []
