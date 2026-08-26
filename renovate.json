@@ -1,6 +1,5 @@
 {
   "extends": [
-    "local>hmcts/.github:renovate-config",
-    "github>hmcts/.github//renovate/cnp-jenkins-library"
+    "local>hmcts/.github:renovate-config"
   ]
 }
