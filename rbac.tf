@@ -4,7 +4,7 @@
 
 # Creator identity — full Key Vault Administrator access.
 resource "azurerm_role_assignment" "creator" {
-  count                = var.enable_rbac_authorization && var.object_id != "" ? 1 : 0
+  count                = var.enable_rbac_authorization && var.object_id != "" && !local.creator_identity_duplicates_jenkins ? 1 : 0
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Administrator"
   principal_id         = var.object_id

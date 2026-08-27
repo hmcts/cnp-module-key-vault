@@ -1,5 +1,6 @@
 locals {
-  vault_name = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  vault_name                          = var.name == "" ? format("%s-%s", var.product, var.env) : var.name
+  creator_identity_duplicates_jenkins = var.jenkins_object_id != "" && (var.object_id == "" || var.object_id == var.jenkins_object_id)
 }
 
 data "azurerm_client_config" "current" {}
@@ -31,7 +32,7 @@ resource "azurerm_key_vault" "kv" {
 }
 
 resource "azurerm_key_vault_access_policy" "creator_access_policy" {
-  count        = var.enable_rbac_authorization ? 0 : 1
+  count        = !var.enable_rbac_authorization && !local.creator_identity_duplicates_jenkins ? 1 : 0
   key_vault_id = azurerm_key_vault.kv.id
 
   object_id = var.object_id
