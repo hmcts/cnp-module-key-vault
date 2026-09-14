@@ -23,6 +23,18 @@ The module creates the following permissions:
  - Managed Identity ($product)-$env-mi
  - Product team/developers access
 
+## Use in Jenkins vs Azure DevOps
+
+When using this module in the common pipeline via Jenkins, the identity of the jenkins agent will be granted access to the keyvault via the `jenkins` `azurerm_key_vault_access_policy` resource.
+
+To ensure compatibility of this module between Jenkins and Azure DevOps pipelines, this resource will only be created when the variable `jenkins_object_id` has a value, as is the case when using a Jenkins pipeline.
+
+In this case of Azure DevOps, this variable is null and this resource is not created. Instead another `azurerm_key_vault_access_policy` resource called `ado` is created to grant key vault access to the service connection used in the Azure DevOps pipeline.
+
+These two resources are mutually exclusive so the `azurerm_key_vault_access_policy` called `jenkins` should not be created when running on Azure DevOps and the `azurerm_key_vault_access_policy` called `ado` will not be created when running on Jenkins.
+
+At the time of writing (September 2026), both CI systems will grant the ptl jenkins identity access to the keyvault for backwards compatibility reasons. This can be seen in the `azurerm_key_vault_access_policy` resource called `jenkins_ptl`.
+
 ## Reading secrets
 
 All developers have access to read non production secrets if they are a member of the `DTS CFT Developers` Azure AD group
