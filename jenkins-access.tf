@@ -48,6 +48,7 @@ resource "azurerm_key_vault_access_policy" "jenkins" {
 }
 
 resource "azurerm_key_vault_access_policy" "jenkins_ptl" {
+  count = !var.enable_rbac_authorization ? 1 : 0
   # This is needed in some instances of nightly pipelines
   # Re-adding this until that is reconfigured
 
