@@ -36,7 +36,7 @@ resource "azurerm_key_vault_access_policy" "managed_identity_access_policy" {
     "List",
   ]
 
-  for_each = local.managed_identity_list
+  for_each = var.enable_rbac_authorization ? toset([]) : local.managed_identity_list
 }
 
 resource "azurerm_key_vault_access_policy" "managed_identity_names_access_policy" {
@@ -50,7 +50,7 @@ resource "azurerm_key_vault_access_policy" "managed_identity_names_access_policy
     "List"
   ]
 
-  for_each = toset(var.additional_managed_identities_access)
+  for_each = var.enable_rbac_authorization ? toset([]) : toset(var.additional_managed_identities_access)
 }
 
 resource "azurerm_key_vault_access_policy" "implicit_managed_identity_access_policy" {
@@ -74,5 +74,5 @@ resource "azurerm_key_vault_access_policy" "implicit_managed_identity_access_pol
     "List",
   ]
 
-  count = var.create_managed_identity ? 1 : 0
+  count = !var.enable_rbac_authorization && var.create_managed_identity ? 1 : 0
 }

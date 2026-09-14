@@ -112,6 +112,12 @@ variable "private_endpoint_name" {
   default = null
 }
 
+variable "enable_private_endpoint" {
+  description = "Whether to create the private endpoint. Leave unset to keep the existing behaviour of inferring this from private_endpoint_subnet_id. Set to true when the subnet is created by the same plan, where that inference cannot be resolved."
+  type        = bool
+  default     = null
+}
+
 variable "additional_managed_identities_access" {
   type    = list(string)
   default = []
@@ -130,6 +136,12 @@ variable "grant_preview_jenkins_access" {
 
 variable "grant_dev_jenkins_access" {
   description = "Temporary opt-in for dev deployments that still read STG vault secrets. When true for env=stg, grants jenkins-dev-mi Get/List access."
+  type        = bool
+  default     = false
+}
+
+  variable "enable_rbac_authorization" {
+  description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities."
   type        = bool
   default     = false
 }
