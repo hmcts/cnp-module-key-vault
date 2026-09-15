@@ -12,3 +12,8 @@ moved {
   from = azurerm_key_vault_access_policy.product_team_access_policy
   to   = azurerm_key_vault_access_policy.product_team_access_policy[0]
 }
+
+moved {
+  from = azurerm_key_vault_access_policy.jenkins_ptl
+  to   = azurerm_key_vault_access_policy.jenkins_ptl[0]
+}
