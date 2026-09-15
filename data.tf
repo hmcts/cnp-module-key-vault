@@ -26,7 +26,7 @@ data "azuread_service_principal" "jenkins_dev" {
 }
 
 data "azuread_service_principal" "jenkins_ptl" {
-  display_name = var.env != "sbox" ? (
+  display_name = var.env != "sbox" && var.env != "sandbox" ? (
     local.business_area == "cft" ? "jenkins-cftptl-intsvc-mi" : "jenkins-ptl-mi"
     ) : (
     local.business_area == "cft" ? "jenkins-cftsbox-intsvc-mi" : "jenkins-ptlsbox-mi"
