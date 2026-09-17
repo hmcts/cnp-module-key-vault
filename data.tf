@@ -1,9 +1,5 @@
 data "azurerm_client_config" "current" {}
 
-data "azuread_service_principal" "current" {
-  client_id = data.azurerm_client_config.current.client_id
-}
-
 data "azuread_group" "developers" {
   display_name = var.developers_group
 }
