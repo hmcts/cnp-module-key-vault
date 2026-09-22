@@ -140,7 +140,7 @@ variable "grant_dev_jenkins_access" {
   default     = false
 }
 
-  variable "enable_rbac_authorization" {
+variable "enable_rbac_authorization" {
   description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities."
   type        = bool
   default     = false
