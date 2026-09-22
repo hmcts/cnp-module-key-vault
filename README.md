@@ -23,6 +23,18 @@ The module creates the following permissions:
  - Managed Identity ($product)-$env-mi
  - Product team/developers access
 
+## Use in Jenkins vs Azure DevOps
+
+When using this module in the common pipeline via Jenkins, the identity of the jenkins agent will be granted access to the keyvault via the `jenkins` `azurerm_key_vault_access_policy` resource.
+
+To ensure compatibility of this module between Jenkins and Azure DevOps pipelines, this resource will only be created when the variable `jenkins_object_id` has a value, as is the case when using a Jenkins pipeline.
+
+In this case of Azure DevOps, this variable is null and this resource is not created. Instead another `azurerm_key_vault_access_policy` resource called `ado` is created to grant key vault access to the service connection used in the Azure DevOps pipeline.
+
+These two resources are mutually exclusive so the `azurerm_key_vault_access_policy` called `jenkins` should not be created when running on Azure DevOps and the `azurerm_key_vault_access_policy` called `ado` will not be created when running on Jenkins.
+
+At the time of writing (September 2026), both CI systems will grant the ptl jenkins identity access to the keyvault for backwards compatibility reasons. This can be seen in the `azurerm_key_vault_access_policy` resource called `jenkins_ptl`.
+
 ## RBAC authorization
 
 By default the module uses [vault access policies](https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy) for data-plane authorization.
@@ -196,6 +208,38 @@ module "key_vault" {
 }
 
 ```
+
+#### Temporarily grant preview Jenkins access to AAT vaults
+Some preview deployments still read AAT team secrets through the Jenkins
+library's default `preview -> aat` vault override. For those repositories,
+opt in to granting `jenkins-preview-mi` `Get/List` access to the AAT vault:
+
+```hcl
+module "key_vault" {
+  source = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  #...
+  grant_preview_jenkins_access = var.env == "aat"
+}
+```
+
+This is a temporary migration exception and should be removed once preview
+secret loading no longer depends on AAT Key Vaults.
+
+#### Temporarily grant dev Jenkins access to STG vaults
+Some dev deployments still read STG team secrets through the Jenkins library's
+default `dev -> stg` vault override. For those repositories, opt in to granting
+`jenkins-dev-mi` `Get/List` access to the STG vault:
+
+```hcl
+module "key_vault" {
+  source = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
+  #...
+  grant_dev_jenkins_access = var.env == "stg"
+}
+```
+
+This is a temporary migration exception and should be removed once dev secret
+loading no longer depends on STG Key Vaults.
 
 ### Accessing Managed Identity details
 You may need to join the readers group for the subscription in order to see the manged identity

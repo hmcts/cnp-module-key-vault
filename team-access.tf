@@ -1,10 +1,3 @@
-data "azuread_group" "product_team" {
-  display_name     = var.product_group_name
-  security_enabled = true
-
-  count = var.product_group_name == "" ? 0 : 1
-}
-
 locals {
   product_group_object_id = var.product_group_name == "" ? var.product_group_object_id : data.azuread_group.product_team[0].object_id
 }

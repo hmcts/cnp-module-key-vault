@@ -128,6 +128,18 @@ variable "jenkins_object_id" {
   default     = ""
 }
 
+variable "grant_preview_jenkins_access" {
+  description = "Temporary opt-in for preview deployments that still read AAT vault secrets. When true for env=aat, grants jenkins-preview-mi Get/List access."
+  type        = bool
+  default     = false
+}
+
+variable "grant_dev_jenkins_access" {
+  description = "Temporary opt-in for dev deployments that still read STG vault secrets. When true for env=stg, grants jenkins-dev-mi Get/List access."
+  type        = bool
+  default     = false
+}
+
 variable "enable_rbac_authorization" {
   description = "Enable Azure RBAC for Key Vault data-plane authorization. When true, access policies are replaced with Azure role assignments for all default identities."
   type        = bool
