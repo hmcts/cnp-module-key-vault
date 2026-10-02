@@ -17,3 +17,8 @@ moved {
   from = azurerm_key_vault_access_policy.jenkins_ptl
   to   = azurerm_key_vault_access_policy.jenkins_ptl[0]
 }
+
+moved {
+  from = azurerm_monitor_diagnostic_setting.kv-ds
+  to   = azurerm_monitor_diagnostic_setting.kv-ds[0]
+}
