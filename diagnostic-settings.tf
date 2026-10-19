@@ -1,6 +1,6 @@
-# Keep AuditEvent diagnostics only for environments mapped to the production workspace.
+# Keep AuditEvent diagnostics only for production environments.
 resource "azurerm_monitor_diagnostic_setting" "kv-ds" {
-  count                      = module.log_analytics_workspace.name == "hmcts-prod" ? 1 : 0
+  count                      = contains(["idam-prod", "idam-prod2", "idam-vault-prod", "idam-vault-prod2", "prod", "mgmt", "ldata", "prod-int", "ptl"], var.env) ? 1 : 0
   name                       = local.vault_name
   target_resource_id         = azurerm_key_vault.kv.id
   log_analytics_workspace_id = module.log_analytics_workspace.workspace_id

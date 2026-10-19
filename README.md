@@ -23,20 +23,6 @@ The module creates the following permissions:
  - Managed Identity ($product)-$env-mi
  - Product team/developers access
 
-## Diagnostic logging
-
-Key Vault `AuditEvent` diagnostic settings are created only for environments that
-the Log Analytics workspace lookup module maps to `hmcts-prod`. This preserves
-diagnostics for production environments, including production aliases such as
-`idam-prod`, `prod-int`, and `ptl`. Environments mapped to `hmcts-nonprod` or
-`hmcts-sandbox` do not create this diagnostic setting.
-
-Existing deployments must pick up this module change and run Terraform apply.
-For non-production environments, that apply removes the diagnostic setting managed
-by this module, stopping future exports through it. Previously ingested logs
-remain subject to the workspace/table retention policy; they are not deleted by
-this change. Diagnostic settings managed elsewhere are unaffected.
-
 ## Use in Jenkins vs Azure DevOps
 
 When using this module in the common pipeline via Jenkins, the identity of the jenkins agent will be granted access to the keyvault via the `jenkins` `azurerm_key_vault_access_policy` resource.
